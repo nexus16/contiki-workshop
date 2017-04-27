@@ -50,6 +50,10 @@
 #include "dev/adxl345.h"
 #endif
 
+/*add battery*/
+#include "dev/battery-sensor.h"
+
+
 #include "dev/button-sensor.h"
 /*---------------------------------------------------------------------------*/
 #define DEBUG 1
@@ -73,6 +77,7 @@ extern resource_t
   res_hello,
   res_leds,
   res_toggle,
+  res_push,
 #if CONTIKI_TARGET_ZOUL
   res_mirror,
   res_push,
@@ -81,6 +86,7 @@ extern resource_t
   res_zoul,
 #else /* Default is Z1 */
   res_adxl345,
+  res_battery,
 #endif
   res_event,
   res_separate;
@@ -128,11 +134,12 @@ PROCESS_THREAD(er_example_server, ev, data)
 
   /* Enable the sensors and devices */
   SENSORS_ACTIVATE(button_sensor);
-
+  SENSORS_ACTIVATE(battery_sensor);
 #if CONTIKI_TARGET_ZOUL
   adc_zoul.configure(SENSORS_HW_INIT, ZOUL_SENSORS_ADC_ALL);
 #else /* Default is Z1 */
   SENSORS_ACTIVATE(adxl345);
+
 #endif
 
   /*
@@ -140,12 +147,15 @@ PROCESS_THREAD(er_example_server, ev, data)
    * WARNING: Activating twice only means alternate path, not two instances!
    * All static variables are the same for each URI path.
    */
+  rest_activate_resource(&res_push, "test/push");
   rest_activate_resource(&res_hello, "test/hello");
   rest_activate_resource(&res_leds, "actuators/leds");
   rest_activate_resource(&res_toggle, "actuators/toggle");
   rest_activate_resource(&res_event, "sensors/button");
   rest_activate_resource(&res_separate, "test/separate");
-
+/* them battery*/
+  rest_activate_resource(&res_battery, "sensors/battery");
+/*end battery*/
 #if CONTIKI_TARGET_ZOUL
   rest_activate_resource(&res_push, "test/push");
   rest_activate_resource(&res_sub, "test/sub");

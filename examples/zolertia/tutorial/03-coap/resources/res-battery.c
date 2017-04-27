@@ -43,33 +43,39 @@
 #include <string.h>
 #include "rest-engine.h"
 #include "dev/battery-sensor.h"
-
+#include "er-coap.h"
 static void res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
-
+static void res_periodic_handler(void);
 /* A simple getter example. Returns the reading from light sensor with a simple etag */
-RESOURCE(res_battery,
+PERIODIC_RESOURCE(res_battery,
          "title=\"Battery status\";rt=\"Battery\"",
          res_get_handler,
          NULL,
          NULL,
-         NULL);
-
+         NULL,
+         5 * CLOCK_SECOND,
+         res_periodic_handler);
+static int battery_old = 0;
+static int battery_new = 0;
+static int battery_tmp = 0;
+static int lan = 0;
 static void
 res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
 {
-  int battery = battery_sensor.value(0);
+	battery_old = battery_sensor.value(0);
 
   unsigned int accept = -1;
   REST.get_header_accept(request, &accept);
 
   if(accept == -1 || accept == REST.type.TEXT_PLAIN) {
     REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
-    snprintf((char *)buffer, REST_MAX_CHUNK_SIZE, "%d", battery);
+    REST.set_header_max_age(response, res_battery.periodic->period / CLOCK_SECOND);
+    snprintf((char *)buffer, REST_MAX_CHUNK_SIZE, "%d - %d - %d", battery_old, battery_new, lan);
 
     REST.set_response_payload(response, (uint8_t *)buffer, strlen((char *)buffer));
   } else if(accept == REST.type.APPLICATION_JSON) {
     REST.set_header_content_type(response, REST.type.APPLICATION_JSON);
-    snprintf((char *)buffer, REST_MAX_CHUNK_SIZE, "{'battery':%d}", battery);
+    snprintf((char *)buffer, REST_MAX_CHUNK_SIZE, "{'battery':%d}", battery_new);
 
     REST.set_response_payload(response, buffer, strlen((char *)buffer));
   } else {
@@ -78,4 +84,20 @@ res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferr
     REST.set_response_payload(response, msg, strlen(msg));
   }
 }
+
+static void
+res_periodic_handler()
+{
+	battery_new = battery_sensor.value(0);
+	battery_tmp = abs(battery_new - battery_old);
+	++lan;
+  /* Do a periodic task here, e.g., sampling a sensor. */
+
+  /* Usually a condition is defined under with subscribers are notified, e.g., large enough delta in sensor reading. */
+  if(1) {
+    /* Notify the registered observers which will trigger the res_get_handler to create the response. */
+    REST.notify_subscribers(&res_battery);
+  }
+}
+
 #endif /* PLATFORM_HAS_BATTERY */
