@@ -82,9 +82,12 @@ static const unsigned short TEMPERATURE[300] = { 2016, 1999, 1919, 1945, 1966,
         2098, 1936, 1953, 2042, 2086, 2098, 1963, 2029, 1915, 2064, 2024, 2071,
         2009, 1986, 1920, 1949, 1912, 1922, 1974, 2080, 1990, 2056, 1997, 1950,
         2066, 2066, 2005, 1931, 2003, 1972, 2049 };
-static int data_send;
+//static int data_send;
 static int temperatureValue;
-static int temperatureArray[5];
+static int temperature_old = 0;
+static int temperature_new = 0;
+static int temperature_tmp = 0;
+//static int temperatureArray[5];
 static void
 res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
 {
@@ -93,9 +96,11 @@ res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferr
    * Otherwise the requests must be stored with the observer list and passed by REST.notify_subscribers().
    * This would be a TODO in the corresponding files in contiki/apps/erbium/!
    */
+
+
   REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
   REST.set_header_max_age(response, res_push.periodic->period / CLOCK_SECOND);
-  REST.set_response_payload(response, buffer, snprintf((char *)buffer, preferred_size, "temperature: %d - %d - %lu",temperatureValue,data_send, event_counter));
+  REST.set_response_payload(response, buffer, snprintf((char *)buffer, preferred_size, "temperature: %d  - %lu",temperatureValue, event_counter));
 
   /* The REST.subscription_handler() will be called for observable resources by the REST framework. */
 }
@@ -110,24 +115,31 @@ res_periodic_handler()
 
 	int temperaturePredict;
 	int i;
+	temperature_old = TEMPERATURE[event_counter];
 	++event_counter;
-	temperatureValue = TEMPERATURE[event_counter];
+	temperature_new = TEMPERATURE[event_counter];
+	temperature_tmp = abs(temperature_new-temperature_old);
+	if(temperature_tmp > 100) {
+		temperatureValue = temperature_tmp;
+		REST.notify_subscribers(&res_push);
+	}
+
   /* Usually a condition is defined under with subscribers are notified, e.g., large enough delta in sensor reading. */
-  if(event_counter<6) {
-    /* Notify the registered observers which will trigger the res_get_handler to create the response. */
-
-
-	  temperatureArray[event_counter-1] = temperatureValue;
-	  data_send = temperatureValue;
-    REST.notify_subscribers(&res_push);
-  }
-  else {
-	  temperaturePredict = 0.6 * temperatureArray[4] + 0.2 * temperatureArray[3] + 0.1 * temperatureArray[2] + 0.05 * temperatureArray[1] + 0.05 * temperatureArray[0];
-	  data_send = temperaturePredict - temperatureValue;
-	  for(i=0;i<4;i++){
-		  temperatureArray[i]=temperatureArray[i+1];
-	  }
-	  temperatureArray[4]= temperatureValue;
-	  REST.notify_subscribers(&res_push);
-  }
+//  if(event_counter<6) {
+//    /* Notify the registered observers which will trigger the res_get_handler to create the response. */
+//
+//
+//	  temperatureArray[event_counter-1] = temperatureValue;
+//	  data_send = temperatureValue;
+//    REST.notify_subscribers(&res_push);
+//  }
+//  else {
+//	  temperaturePredict = 0.6 * temperatureArray[4] + 0.2 * temperatureArray[3] + 0.1 * temperatureArray[2] + 0.05 * temperatureArray[1] + 0.05 * temperatureArray[0];
+//	  data_send = temperaturePredict - temperatureValue;
+//	  for(i=0;i<4;i++){
+//		  temperatureArray[i]=temperatureArray[i+1];
+//	  }
+//	  temperatureArray[4]= temperatureValue;
+//
+//  }
 }

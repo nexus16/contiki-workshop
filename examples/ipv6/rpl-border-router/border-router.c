@@ -216,7 +216,7 @@ PT_THREAD(generate_routes(struct httpd_state *s))
       }
 #endif
   }
-  ADD("</pre>Routes<pre>\n");
+  ADD("</pre>Routes<pre><strong>\n");
   SEND_STRING(&s->sout, buf);
 #if BUF_USES_STACK
   bufptr = buf; bufend = bufptr + sizeof(buf);
@@ -249,7 +249,7 @@ PT_THREAD(generate_routes(struct httpd_state *s))
     ipaddr_add(&r->ipaddr);
 #endif
 #endif
-    ADD("/%u (via ", r->length);
+    ADD("</strong> /%u (via ", r->length);
     ipaddr_add(uip_ds6_route_nexthop(r));
     if(1 || (r->state.lifetime < 600)) {
       ADD(") %lus\n", (unsigned long)r->state.lifetime);
