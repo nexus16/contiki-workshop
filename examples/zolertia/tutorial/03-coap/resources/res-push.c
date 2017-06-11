@@ -82,11 +82,69 @@ static const unsigned short TEMPERATURE[300] = { 2016, 1999, 1919, 1945, 1966,
         2098, 1936, 1953, 2042, 2086, 2098, 1963, 2029, 1915, 2064, 2024, 2071,
         2009, 1986, 1920, 1949, 1912, 1922, 1974, 2080, 1990, 2056, 1997, 1950,
         2066, 2066, 2005, 1931, 2003, 1972, 2049 };
+static const unsigned short LIGHT[300] = { 4359, 4449, 4468, 4314, 4333, 4335,
+        4470, 4331, 4425, 4300, 4370, 4439, 4381, 4336, 4309, 4332, 4446, 4327,
+        4401, 4374, 4325, 4331, 4417, 4318, 4356, 4365, 4394, 4458, 4400, 4459,
+        4399, 4378, 4419, 4358, 4479, 4335, 4375, 4418, 4435, 4409, 4414, 4347,
+        4315, 4334, 4414, 4453, 4385, 4336, 4459, 4352, 4478, 4358, 4373, 4372,
+        4376, 4321, 4331, 4478, 4354, 4357, 4386, 4459, 4411, 4356, 4368, 4313,
+        4491, 4407, 4409, 4452, 4381, 4433, 4471, 4312, 4354, 4337, 4311, 4425,
+        4309, 4472, 4369, 4376, 4353, 4460, 4487, 4415, 4450, 4432, 4411, 4419,
+        4421, 4431, 4482, 4318, 4406, 4492, 4495, 4359, 4446, 4378, 4359, 4449,
+        4468, 4314, 4333, 4335, 4470, 4331, 4425, 4300, 4370, 4439, 4381, 4336,
+        4309, 4332, 4446, 4327, 4401, 4374, 4325, 4331, 4417, 4318, 4356, 4365,
+        4394, 4458, 4400, 4459, 4399, 4378, 4419, 4358, 4479, 4335, 4375, 4418,
+        4435, 4409, 4414, 4347, 4315, 4334, 4414, 4453, 4385, 4336, 4459, 4352,
+        4478, 4358, 4373, 4372, 4376, 4321, 4331, 4478, 4354, 4357, 4386, 4459,
+        4411, 4356, 4368, 4313, 4491, 4407, 4409, 4452, 4381, 4433, 4471, 4312,
+        4354, 4337, 4311, 4425, 4309, 4472, 4369, 4376, 4353, 4460, 4487, 4415,
+        4450, 4432, 4411, 4419, 4421, 4431, 4482, 4318, 4406, 4492, 4495, 4359,
+        4446, 4378, 4359, 4449, 4468, 4314, 4333, 4335, 4470, 4331, 4425, 4301,
+        4370, 4439, 4381, 4336, 4309, 4332, 4446, 4327, 4401, 4374, 4325, 4331,
+        4417, 4318, 4356, 4365, 4394, 4458, 4400, 4459, 4399, 4378, 4419, 4358,
+        4479, 4335, 4375, 4418, 4435, 4409, 4414, 4347, 4315, 4334, 4414, 4453,
+        4385, 4336, 4459, 4352, 4478, 4358, 4373, 4372, 4376, 4321, 4331, 4478,
+        4354, 4357, 4386, 4459, 4411, 4356, 4368, 4313, 4491, 4407, 4409, 4452,
+        4381, 4433, 4471, 4312, 4354, 4337, 4311, 4425, 4309, 4472, 4369, 4376,
+        4353, 4460, 4487, 4415, 4450, 4432, 4411, 4419, 4421, 4431, 4482, 4318,
+        4406, 4492, 4495, 4359, 4446, 4378 };
+static const unsigned short MOISUTRE[300] = { 3762, 3733, 3716, 3866, 3871,
+        3727, 3845, 3765, 3774, 3798, 3700, 3756, 3881, 3830, 3883, 3787, 3813,
+        3801, 3877, 3770, 3798, 3779, 3828, 3835, 3776, 3739, 3849, 3861, 3788,
+        3723, 3837, 3764, 3740, 3818, 3862, 3832, 3807, 3897, 3865, 3806, 3863,
+        3857, 3790, 3863, 3714, 3784, 3781, 3876, 3803, 3708, 3785, 3762, 3755,
+        3853, 3757, 3714, 3820, 3733, 3819, 3727, 3843, 3792, 3765, 3762, 3756,
+        3723, 3841, 3863, 3704, 3845, 3722, 3855, 3831, 3786, 3748, 3766, 3707,
+        3771, 3768, 3783, 3883, 3826, 3895, 3792, 3821, 3723, 3734, 3826, 3795,
+        3856, 3743, 3803, 3725, 3774, 3713, 3749, 3711, 3800, 3710, 3743, 3732,
+        3703, 3762, 3701, 3702, 3795, 3829, 3738, 3870, 3787, 3702, 3827, 3798,
+        3790, 3774, 3820, 3749, 3720, 3860, 3750, 3784, 3882, 3771, 3709, 3850,
+        3725, 3799, 3833, 3727, 3819, 3750, 3764, 3821, 3871, 3878, 3893, 3859,
+        3761, 3728, 3834, 3741, 3751, 3881, 3814, 3872, 3739, 3741, 3756, 3822,
+        3852, 3721, 3741, 3765, 3722, 3793, 3816, 3763, 3850, 3809, 3712, 3896,
+        3882, 3898, 3722, 3745, 3725, 3711, 3711, 3802, 3831, 3791, 3842, 3823,
+        3822, 3894, 3862, 3838, 3718, 3807, 3801, 3773, 3770, 3793, 3743, 3786,
+        3728, 3720, 3881, 3815, 3894, 3792, 3819, 3703, 3894, 3855, 3834, 3794,
+        3885, 3746, 3856, 3740, 3722, 3831, 3751, 3732, 3729, 3797, 3848, 3889,
+        3707, 3702, 3823, 3889, 3785, 3844, 3858, 3839, 3703, 3743, 3829, 3791,
+        3863, 3706, 3860, 3814, 3863, 3767, 3777, 3719, 3710, 3890, 3726, 3707,
+        3889, 3861, 3838, 3824, 3859, 3806, 3802, 3714, 3791, 3740, 3804, 3712,
+        3849, 3802, 3878, 3856, 3779, 3899, 3746, 3831, 3798, 3891, 3739, 3850,
+        3739, 3817, 3743, 3785, 3802, 3810, 3889, 3839, 3788, 3749, 3879, 3879,
+        3782, 3899, 3741, 3781, 3819, 3715, 3838, 3820, 3731, 3835, 3777, 3749,
+        3894, 3765, 3777, 3866, 3759, 3731, 3729, 3750, 3773, 3875, 3715, 3876,
+        3873, 3855, 3825, 3726, 3835, 3885, 3812};
 //static int data_send;
-static int temperatureValue;
-static int temperature_old = 0;
-static int temperature_new = 0;
-static int temperature_tmp = 0;
+//static int temperatureValue;
+static unsigned short temperature = 0;
+static short temperature_tmp = 0;
+//static int lightValue;
+static unsigned short light = 0;
+static short light_tmp = 0;
+static unsigned short moisutre = 0;
+static int moisutre_tmp = 0;
+static short flag = 0;
+
 //static int temperatureArray[5];
 static void
 res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
@@ -98,9 +156,10 @@ res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferr
    */
 
 
+
   REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
   REST.set_header_max_age(response, res_push.periodic->period / CLOCK_SECOND);
-  REST.set_response_payload(response, buffer, snprintf((char *)buffer, preferred_size, "temperature: %d  - %lu",temperatureValue, event_counter));
+  REST.set_response_payload(response, buffer, snprintf((char *)buffer, preferred_size, "%d|%d|%d|%d",flag,temperature_tmp,light_tmp,moisutre_tmp));
 
   /* The REST.subscription_handler() will be called for observable resources by the REST framework. */
 }
@@ -112,17 +171,32 @@ static void
 res_periodic_handler()
 {
   /* Do a periodic task here, e.g., sampling a sensor. */
+	const unsigned short light_overage = 4400;
+	const unsigned short temperature_overage = 2000;
+	const unsigned short moisutre_overage = 3800;
+	 short light_flag;
+	 short temperature_flag;
+	 short moisutre_flag;
 
-	int temperaturePredict;
-	int i;
-	temperature_old = TEMPERATURE[event_counter];
+	temperature = TEMPERATURE[event_counter];
+	light = LIGHT[event_counter];
+	moisutre = MOISUTRE[event_counter];
 	++event_counter;
-	temperature_new = TEMPERATURE[event_counter];
-	temperature_tmp = abs(temperature_new-temperature_old);
-	if(temperature_tmp > 100) {
-		temperatureValue = temperature_tmp;
+
+	temperature_tmp = temperature - temperature_overage;
+	light_tmp = light - light_overage;
+	moisutre_tmp = moisutre - moisutre_overage;
+
+	temperature_flag = (temperature_tmp > 0)?1:0;
+	light_flag = (light_tmp > 0)?1:0;
+	moisutre_flag = (moisutre_tmp > 0)?1:0;
+	flag = temperature_flag*2*2 + light_flag*2 + moisutre_flag;
+	temperature_tmp = abs(temperature - temperature_overage);
+	light_tmp = abs(light - light_overage);
+	moisutre_tmp = abs(moisutre - moisutre_overage);
+
 		REST.notify_subscribers(&res_push);
-	}
+
 
   /* Usually a condition is defined under with subscribers are notified, e.g., large enough delta in sensor reading. */
 //  if(event_counter<6) {
